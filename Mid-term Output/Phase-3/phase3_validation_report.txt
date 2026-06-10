@@ -1,0 +1,50 @@
+CBL-16 Phase-3: Statistical Validation Report
+
+Features entering validation: ['severity_weighted_count', 'resolution_rate', 'seasonal_volatility', 'imd_rank', 'income_rank', 'employment_rank', 'stop_search_rate', 'total_footfall']
+Features validated (final):   ['severity_weighted_count', 'seasonal_volatility', 'stop_search_rate', 'employment_rank', 'resolution_rate', 'total_footfall']
+
+3a: SPEARMAN CORRELATION 
+  severity_weighted_count         r=+0.9685  p=0.00e+00  PASS
+  seasonal_volatility             r=+0.9120  p=0.00e+00  PASS
+  stop_search_rate                r=+0.6605  p=0.00e+00  PASS
+  imd_rank                        r=-0.4964  p=0.00e+00  PASS
+  income_rank                     r=-0.4085  p=0.00e+00  PASS
+  employment_rank                 r=-0.3921  p=0.00e+00  PASS
+  resolution_rate                 r=+0.2862  p=0.00e+00  PASS
+  total_footfall                  r=+0.2409  p=0.00e+00  PASS
+Dropped: []
+
+
+3a: VIF TEST 
+  Iteration 1: drop 'imd_rank' (VIF=15.15)
+  Iteration 2: drop 'income_rank' (VIF=8.03)
+Dropped by VIF: ['imd_rank', 'income_rank']
+Validated features: ['severity_weighted_count', 'seasonal_volatility', 'stop_search_rate', 'employment_rank', 'resolution_rate', 'total_footfall']
+
+3b: KRUSKAL-WALLIS TEST
+  H=28.7538, p=2.4784e-03
+  Result: Seasonality confirmed (p<0.05)
+
+3b: COEFFICIENT OF VARIATION
+  Drugs                                CV=22.7%
+  Bicycle theft                        CV=21.0%
+  Possession of weapons                CV=19.3%
+  Theft from the person                CV=19.2%
+  Shoplifting                          CV=18.5%
+  Other theft                          CV=14.6%
+  Other crime                          CV=14.2%
+  Anti-social behavior                CV=12.8%
+  Vehicle crime                        CV=10.5%
+  Public order                         CV=10.5%
+  Burglary                             CV=8.7%
+  Robbery                              CV=7.6%
+  Criminal damage and arson            CV=6.8%
+  Violence and sexual offences         CV=6.6%
+
+3b: STL DECOMPOSITION
+  Seasonal strength: 0.9082
+  Interpretation: Strong seasonality
+
+3c: MORAN'S I
+  I=0.450044, E[I]=-0.000200, p=0.0010, z=65.2757
+  Result: Spatial clustering confirmed (p<0.05)
