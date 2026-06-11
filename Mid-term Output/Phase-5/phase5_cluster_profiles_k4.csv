@@ -1,0 +1,5 @@
+tier,risk_score_scaled,crime_count,severity_weighted_count,seasonal_volatility,stop_search_rate,employment_deprivation,resolution_rate,total_footfall,n_lsoas,pct_london
+1,56.02,637.86,76783.5,6.72,706.45,26945.08,9.0,1085042.35,1429,28.6
+2,53.8,601.4,65700.1,6.42,467.59,19980.73,8.09,1511078.26,1538,30.8
+3,50.85,445.62,48086.04,5.07,264.61,12290.61,7.44,1650481.62,1047,21.0
+4,47.68,413.17,39293.22,4.54,200.06,3568.3,6.51,2415053.34,980,19.6
