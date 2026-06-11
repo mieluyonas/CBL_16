@@ -1,0 +1,5 @@
+tier,risk_score_scaled,crime_count,severity_weighted_count,seasonal_volatility,stop_search_rate,employment_deprivation,resolution_rate,total_footfall,n_lsoas,pct_london,tier_label
+1,60.38,1545.26,149329.66,12.61,1320.28,22009.03,9.62,9332133.09,777,15.6,High Risk
+2,53.73,454.38,55899.46,5.46,387.72,20748.02,8.25,274080.81,2585,51.8,Elevated Risk
+3,47.52,205.49,24147.36,3.27,106.32,9077.45,6.52,6055.65,1619,32.4,Moderate Risk
+4,2.13,0.0,0.0,0.0,116.57,13004.85,7.9,0.0,13,0.3,Low Risk
