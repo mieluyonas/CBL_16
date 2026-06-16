@@ -1,0 +1,13 @@
+CBL-16 Phase 6 - Supervised Validation & Tiering (london-final-light)
+==============================================================
+Train 24mo: 2,258,575 crimes
+Future 12mo: 1,142,142 crimes
+AUC index=0.9172
+AUC baseline(past crime)=0.9851
+ROC tier cuts: T1>=75.5, T2>=73.3, T3>=69.0
+AUC by level: 15%=0.917, 40%=0.905, 70%=0.928
+Tier1: n=1265 (25.3%), hotspot-share=48.4%
+Tier2: n=616 (12.3%), hotspot-share=11.5%
+Tier3: n=1247 (25.0%), hotspot-share=4.7%
+Tier4: n=1866 (37.4%), hotspot-share=0.4%
+Supervised vs K-means k4 agreement: 42.4% exact, 85.0% within 1 tier
