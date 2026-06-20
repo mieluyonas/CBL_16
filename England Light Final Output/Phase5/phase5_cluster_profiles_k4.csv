@@ -1,0 +1,5 @@
+tier,risk_score_scaled,crime_count,employment_deprivation,resolution_rate,ntl_mean_radiance,n_lsoas,pct_total
+1,54.06,628.12,29487.93,12.24,21.05,8414,24.9
+2,42.91,449.64,21155.72,11.06,16.38,8304,24.6
+3,31.05,309.79,12866.02,10.63,11.01,8374,24.8
+4,20.58,229.91,4408.2,9.47,9.38,8663,25.7
