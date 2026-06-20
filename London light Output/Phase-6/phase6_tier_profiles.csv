@@ -1,5 +1,0 @@
-tier,n_lsoas,mean_risk_score,score_min,score_max,hotspot_share_pct,pct,severity_weighted_count,ntl_mean_radiance,employment_deprivation,resolution_rate
-1,1265,79.6,76.15,100.0,48.77,25.33,262430.62,58.98,23886.03,9.45
-2,616,75.11,74.04,76.15,11.2,12.33,144212.5,39.22,22040.76,8.45
-3,1247,72.0,69.82,74.04,4.33,24.97,108828.52,32.15,18933.7,7.96
-4,1866,64.11,0.0,69.82,0.48,37.36,58890.88,22.19,9751.78,6.64
