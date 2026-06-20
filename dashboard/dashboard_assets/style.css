@@ -1,0 +1,172 @@
+/* CBL-16 London policing demand dashboard  light theme. */
+
+:root {
+    --accent: #2563EB;        /* blue-600 — interactive / active state */
+    --accent-deep: #1E3A8A;   /* navy — deep accents + station markers  */
+    --ink: #1F2937;           /* gray-800 — headings + primary text      */
+    --ink-soft: #6B7280;      /* gray-500 — muted text                   */
+    --line: #E5E7EB;          /* hairline borders                        */
+    --surface: #FFFFFF;
+    --canvas: #F7F8FA;        /* app background tint                     */
+}
+
+/* ----- canvas + width ----- */
+.stApp { background: var(--canvas); }
+[data-testid="stHeader"] { background: transparent; }
+.block-container {
+    padding-top: 3.4rem;
+    padding-bottom: 2rem;
+    max-width: 1500px;
+}
+
+/* ----- typography ----- */
+h1, h2, h3 { color: var(--ink); font-weight: 650; letter-spacing: -0.01em; }
+h1 { font-size: 1.55rem; margin-bottom: 0.1rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.02rem; }
+.muted { color: var(--ink-soft); font-size: 0.85rem; }
+
+/* ----- header row: title + live conditions ribbon ----- */
+.app-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+.app-head .title {
+    font-size: 1.55rem;
+    font-weight: 650;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+.app-head .sub { color: var(--ink-soft); font-size: 0.85rem; }
+.ribbon { color: var(--ink-soft); font-size: 0.9rem; white-space: nowrap; }
+.ribbon b { color: var(--ink); font-weight: 600; }
+.ribbon .dot { color: var(--line); padding: 0 0.4rem; }
+
+/* ----- tier legend chips ----- */
+.legend {
+    display: flex;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin: 0.1rem 0 0.55rem;
+}
+.legend .sw {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    margin-right: 0.35rem;
+    vertical-align: middle;
+}
+
+/* ----- bordered containers used as cards ----- */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: var(--surface);
+    border: 1px solid var(--line) !important;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+/* legacy card class, kept */
+.stCard {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+/* ----- metrics ----- */
+[data-testid="stMetricValue"] {
+    font-size: 1.5rem;
+    font-weight: 650;
+    color: var(--ink);
+}
+[data-testid="stMetricLabel"] {
+    color: var(--ink-soft);
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+[data-testid="stMetricDelta"] { font-size: 0.76rem; }
+
+/* ----- tabs ----- */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--line);
+}
+[data-testid="stTabs"] button[data-baseweb="tab"] {
+    font-size: 0.96rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 0.4rem 0.25rem;
+}
+[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--accent);
+}
+[data-baseweb="tab-highlight"] { background-color: var(--accent) !important; }
+
+/* ----- sidebar ----- */
+[data-testid="stSidebar"] {
+    background: #F4F6F9;
+    border-right: 1px solid var(--line);
+}
+[data-testid="stSidebar"] h2 {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin: 0.3rem 0 0.3rem;
+}
+[data-testid="stSidebar"] h3 { font-size: 0.95rem; }
+[data-testid="stSidebar"] .stSlider { margin-top: 0.2rem; }
+/* let the tier multiselect grow to show all chips (England has 6 tiers) rather
+   than capping its height and hiding the lowest tiers behind an inner scroll. */
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] div[data-baseweb="select"] > div:first-child {
+    max-height: none;
+}
+
+/* ----- buttons ----- */
+.stButton > button {
+    border-radius: 7px;
+    font-size: 0.88rem;
+    padding: 0.36rem 0.6rem;
+    line-height: 1.2;
+    border-color: var(--line);
+}
+.stButton > button[kind="primary"] {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* top-10 hotspot list: tight spacing, plain background */
+[data-testid="stVerticalBlock"]:has(> div > [data-testid="stButton"][key^="hot_"]) {
+    gap: 0;
+}
+[data-testid="stButton"] button[kind="secondary"][data-testid^="baseButton-secondary"] {
+    background: var(--surface);
+}
+
+/* ----- alerts ----- */
+[data-testid="stAlert"] { border-radius: 9px; border-left-width: 4px; }
+
+/* ----- detail rows ------*/
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #F0F2F5;
+    font-size: 0.92rem;
+}
+.detail-label { color: var(--ink-soft); }
+.detail-value { color: var(--ink); font-weight: 500; }

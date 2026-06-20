@@ -1,0 +1,16 @@
+{
+  "source": "MPS stop-and-search, borough-day, May 2024 \u2013 Apr 2026",
+  "football_pct_pooled": 22.3,
+  "football_pooled_p": 0.047,
+  "football_pct_by_club": {
+    "Arsenal": 11.6,
+    "Chelsea": 9.8,
+    "Tottenham": 11.2,
+    "West Ham": 36.1,
+    "Crystal Palace": 10.7,
+    "Fulham": 35.1,
+    "Brentford": 43.9
+  },
+  "weekend_pct": 11.9,
+  "weekend_p": 7.41e-13
+}

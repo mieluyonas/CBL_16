@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "name": "CBL-16 Dynamic Risk Adjustment Layer",
+    "version": "0.1",
+    "created": "2026-06-02",
+    "purpose": "Literature-informed, expert-adjustable multipliers applied on top of the static LSOA risk index to produce a current-conditions risk score.",
+    "contract": "The dashboard consumes this config plus per-LSOA static inputs. For a given date/time it (1) reads the day's feature values, (2) computes each active factor's literature-default multiplier, (3) lets the officer override the multiplier within [min,max], (4) applies the formula below. The static index is never modified.",
+    "important": "All effect sizes are ILLUSTRATIVE LITERATURE-INFORMED DEFAULTS, not values estimated from the project's own crime data (police.uk street crime is month-level only and has no time-of-day, so weekend/night/holiday/match effects cannot be derived locally). Treat them as priors the officer updates."
+  },
+
+  "formula": {
+    "expression": "risk_now = risk_static * combined_factor",
+    "combined_factor": "clamp( product(active_factor_multipliers), combined_min, combined_max )",
+    "active": "a factor contributes only when its applies_when condition is true; otherwise its multiplier = 1.0"
+  },
+
+  "global_caps": {
+    "combined_min": 0.5,
+    "combined_max": 2.5,
+    "note": "Prevents a stack of factors (or aggressive overrides) from producing an absurd score."
+  },
+
+  "required_inputs": {
+    "per_day_global": [
+      {"name": "temp_c", "desc": "London daily mean temperature (°C)", "source": "extend existing NetCDF to daily, or live forecast API (e.g. Met Office / Open-Meteo)"},
+      {"name": "cloud_cover_pct", "desc": "Daily mean cloud cover %", "source": "forecast API; LOW confidence factor"},
+      {"name": "is_bank_holiday", "desc": "England & Wales bank holiday flag", "source": "gov.uk bank-holidays JSON (free)"},
+      {"name": "day_of_week", "desc": "Mon..Sun", "source": "calendar"},
+      {"name": "is_night", "desc": "evening/night window flag, e.g. 18:00-04:00", "source": "dashboard time selector"}
+    ],
+    "per_lsoa_static": [
+      {"name": "bar_count", "desc": "count of on-licence premises (pubs/bars/clubs) in the LSOA", "source": "OpenStreetMap (amenity=bar/pub/nightclub) or local-authority licensing register"},
+      {"name": "bar_density_norm", "desc": "bar_count normalised to [0,1] across London (or per km2)", "source": "derive from bar_count"},
+      {"name": "stadium_proximity_flag", "desc": "1 if LSOA is within the catchment of a football stadium", "source": "stadium coords + buffer / LSOA boundary join"},
+      {"name": "stadium_name", "desc": "nearest stadium (for match-day lookup)", "source": "manual list of London stadia"}
+    ],
+    "per_day_event": [
+      {"name": "match_day", "desc": "1 if a home fixture is played that day at the linked stadium", "source": "football fixture list (e.g. football-data.org API)"},
+      {"name": "match_band", "desc": "low | medium | high (by attendance / derby / cup)", "source": "fixture metadata + manual flagging"}
+    ]
+  },
+
+  "factors": [
+    {
+      "id": "temperature",
+      "label": "Temperature",
+      "confidence": "medium",
+      "applies_when": "always",
+      "input": "temp_c",
+      "model": {
+        "type": "linear_per_unit",
+        "reference_value_c": 15,
+        "per_degree_effect": 0.012,
+        "expression": "multiplier = 1 + 0.012 * (temp_c - 15)"
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 0.85,
+      "max_multiplier": 1.30,
+      "officer_editable": ["per_degree_effect", "reference_value_c"],
+      "rationale": "Positive temperature-violence relationship in temperate climates. ~1.2% uplift in violent/public-order crime per degree C above a mild reference; suppressed in cold weather (fewer people outdoors).",
+      "citation": ["Field (1992)", "Cohn (1990)", "Ranson (2014)"]
+    },
+    {
+      "id": "cloud_cover",
+      "label": "Cloud cover / poor weather",
+      "confidence": "low",
+      "applies_when": "always",
+      "input": "cloud_cover_pct",
+      "model": {
+        "type": "linear_per_unit",
+        "reference_value_pct": 50,
+        "per_pct_effect": -0.0008,
+        "expression": "multiplier = 1 + (-0.0008) * (cloud_cover_pct - 50)"
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 0.90,
+      "max_multiplier": 1.05,
+      "officer_editable": ["per_pct_effect"],
+      "rationale": "Proxy for precipitation/poor weather, which tends to suppress outdoor and property crime via routine-activity (fewer targets/people outside). Evidence weaker than temperature - keep small range and flag as low confidence. Consider replacing with a direct precipitation input.",
+      "citation": ["Cohn (1990)", "Tompson & Bowers (2013)"]
+    },
+    {
+      "id": "weekend",
+      "label": "Weekend",
+      "confidence": "medium-high",
+      "applies_when": "day_of_week in [Fri, Sat, Sun]",
+      "input": "day_of_week",
+      "model": {
+        "type": "categorical",
+        "values": {"Fri": 1.10, "Sat": 1.15, "Sun": 1.05, "other": 1.0}
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 1.0,
+      "max_multiplier": 1.35,
+      "officer_editable": ["values"],
+      "rationale": "Violent and public-order crime concentrate on weekends, driven largely by the night-time economy. Saturday highest.",
+      "citation": ["Felson & Poulsen (2003)", "Tompson & Bowers (2013)"]
+    },
+    {
+      "id": "holiday",
+      "label": "Public / bank holiday",
+      "confidence": "low-medium",
+      "applies_when": "is_bank_holiday == true",
+      "input": "is_bank_holiday",
+      "model": {
+        "type": "flag",
+        "multiplier_when_true": 1.10
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 0.90,
+      "max_multiplier": 1.30,
+      "officer_editable": ["multiplier_when_true"],
+      "rationale": "Heterogeneous effect: alcohol-related violence and public-order tend to rise (esp. festive period / NYE), while commercial property crime can fall when businesses close. Net uplift modest; flag NYE as a special high case in the dashboard.",
+      "citation": ["Cohn & Rotton (2003)", "ONS seasonal crime commentary"]
+    },
+    {
+      "id": "nightlife_alcohol",
+      "label": "Fri/Sat night x bar density",
+      "confidence": "medium-high",
+      "applies_when": "day_of_week in [Fri, Sat] AND is_night == true",
+      "input": "bar_density_norm",
+      "model": {
+        "type": "scaled_by_density",
+        "alpha": 0.40,
+        "expression": "multiplier = 1 + 0.40 * bar_density_norm",
+        "note": "bar_density_norm in [0,1]; LSOA with no bars -> multiplier 1.0; densest nightlife LSOA -> up to 1.40"
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 1.0,
+      "max_multiplier": 1.50,
+      "officer_editable": ["alpha"],
+      "rationale": "On-premise alcohol outlet density is one of the better-evidenced spatial correlates of assault and public-order offences, concentrated on Friday/Saturday nights. Effect scales with local outlet density.",
+      "citation": ["Livingston (2008)", "Gruenewald (2007)", "Pridemore & Grubesic (2013)"]
+    },
+    {
+      "id": "football",
+      "label": "Football match day (near stadium)",
+      "confidence": "medium",
+      "applies_when": "stadium_proximity_flag == 1 AND match_day == 1",
+      "input": "match_band",
+      "model": {
+        "type": "categorical",
+        "values": {"low": 1.10, "medium": 1.20, "high": 1.35}
+      },
+      "default_at_reference": 1.0,
+      "min_multiplier": 1.0,
+      "max_multiplier": 1.60,
+      "officer_editable": ["values"],
+      "rationale": "Match days raise property crime and violence in the area immediately around stadia; effect is spatially localised and scales with attendance / rivalry. Note also documented rises in domestic abuse linked to England match outcomes - consider as a separate force-wide flag.",
+      "citation": ["Marie (2010)", "Kurland et al. (2014)", "Kirby et al. (2014) (domestic abuse)"]
+    }
+  ]
+}
