@@ -1,0 +1,42 @@
+CBL-16: Phase-3 Statistical Validation Report (England No Severity)
+
+Features entering validation: ['resolution_rate', 'imd_rank', 'income_rank', 'employment_rank', 'ntl_mean_radiance']
+Features validated (final):   ['employment_rank', 'ntl_mean_radiance', 'resolution_rate']
+
+3a: SPEARMAN CORRELATION
+  income_rank                     r=-0.5511  p=0.00e+00  PASS
+  imd_rank                        r=-0.5448  p=0.00e+00  PASS
+  employment_rank                 r=-0.4981  p=0.00e+00  PASS
+  ntl_mean_radiance               r=+0.4198  p=0.00e+00  PASS
+  resolution_rate                 r=+0.2825  p=0.00e+00  PASS
+Dropped: []
+
+3a: VIF TEST
+  Iteration 1: drop 'income_rank' (VIF=12.40)
+  Iteration 2: drop 'imd_rank' (VIF=9.15)
+Dropped by VIF: ['income_rank', 'imd_rank']
+Validated features: ['employment_rank', 'ntl_mean_radiance', 'resolution_rate']
+
+3b: KRUSKAL-WALLIS TEST
+  H=32.6036, p=6.0986e-04
+  Result: Seasonality confirmed (p<0.05)
+
+3b: COEFFICIENT OF VARIATION
+  Bicycle theft                        CV=22.0%
+  Anti-social behaviour                CV=15.8%
+  Theft from the person                CV=15.2%
+  Public order                         CV=12.8%
+  Drugs                                CV=12.5%
+  Vehicle crime                        CV=10.4%
+  Shoplifting                          CV=10.2%
+  Other theft                          CV=9.8%
+  Other crime                          CV=9.7%
+  Burglary                             CV=8.4%
+  Criminal damage and arson            CV=8.2%
+  Possession of weapons                CV=8.1%
+  Robbery                              CV=7.0%
+  Violence and sexual offences         CV=5.5%
+
+3c: MORAN'S I
+  I=0.402542, E[I]=-0.000030, p=0.0010, z=123.4950
+  Result: Spatial clustering confirmed (p<0.05)
